@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Ejemplo cliente de WebSocket</title>
+  </head>
+  <body>
+
+    <!-- Nuevo Mensaje -->
+    <input type="text" id="nuevo-mensaje">
+
+    <!-- Mensajes recibidos -->
+    <div id="respuestas"></div>
+
+    <script>
+      // Variables
+      const miWebSocket = new WebSocket("ws://localhost:8080");
+      const miNuevoMensaje = document.getElementById("nuevo-mensaje");
+      const misRespuestas = document.getElementById("respuestas");
+
+      // Funciones
+      function mostrarMensaje(mensaje) {
+          const nuevoMensaje = document.createElement("p");
+          nuevoMensaje.textContent = mensaje;
+          misRespuestas.appendChild(nuevoMensaje);
+      }
+
+      function enviarMensaje() {
+          const mensaje = miNuevoMensaje.value;
+          miWebSocket.send(mensaje);
+          miNuevoMensaje.value = "";
+      }
+
+      // Eventos de WebSocket
+      miWebSocket.addEventListener("open", function () {
+          console.log("WebSocket abierto.");
+      });
+
+      miWebSocket.addEventListener("message", function (evento) {
+          const mensajeRecibido = evento.data;
+          mostrarMensaje(mensajeRecibido);
+      });
+
+      miWebSocket.addEventListener("error", function (evento) {
+          console.error("WebSocket ha observado un error: ", evento);
+      });
+
+      miWebSocket.addEventListener("close", function () {
+          console.log("WebSocket cerrado.");
+      });
+
+      // Evento para enviar nuevo mensaje
+      miNuevoMensaje.addEventListener("keypress", function (evento) {
+          if (evento.code === "Enter") {
+              enviarMensaje();
+          }
+      });
+
+    </script>
+  </body>
+</html>
